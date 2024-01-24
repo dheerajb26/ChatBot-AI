@@ -3,7 +3,7 @@ import tkinter as tk
 def on_send_button_click(event=None):
     message = entry.get()
     if message:
-        # Insert the message at the end of the listbox
+        # Insert the message at the end of the listbox nowww
         messages_listbox.insert(tk.END, f"You: {message}")
         # Clear the entry widget after sending
         entry.delete(0, 'end')
