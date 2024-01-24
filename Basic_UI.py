@@ -17,7 +17,7 @@ messages_listbox = tk.Listbox(window, width=40, height=10)
 messages_listbox.pack(padx=30, pady=30, expand=True, fill=tk.BOTH)
 
 # Create and place the entry widget with a fixed width of 50
-entry = tk.Entry(window, width=100)
+entry = tk.Entry(window, width=160)
 entry.pack(padx=30, pady=10, side=tk.LEFT)  # Set side=tk.LEFT
 
 # Create and place the "Send" button with a larger width and height
