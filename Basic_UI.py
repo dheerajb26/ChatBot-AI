@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import filedialog  # Import filedialog module for file selection
 import textwrap
 import google.generativeai as genai
 
@@ -15,10 +16,13 @@ def on_send_button_click(event=None):
         formatted_response = to_markdown(response.text)
         messages_listbox.insert(tk.END, formatted_response)
 
-def to_markdown(text):
-    # Format text as markdown
-    formatted_text = text.replace('•', '  *')
-    return textwrap.indent(formatted_text, 'Sahayak: ')
+def on_upload_button_click():
+    # Open a file dialog for selecting a link file
+    link_file_path = filedialog.askopenfilename(title="Select Link File", filetypes=[("Text Files", "*.txt")])
+
+    # Insert the selected link into the link_entry widget
+    link_entry.delete(0, 'end')
+    link_entry.insert(0, link_file_path)
 
 # Create the main window
 window = tk.Tk()
@@ -35,6 +39,14 @@ entry.pack(padx=10, pady=10, side=tk.LEFT)  # Set side=tk.LEFT
 # Create and place the "Send" button with a larger width and height
 send_button = tk.Button(window, text="Send", command=on_send_button_click, width=10, height=2)
 send_button.pack(pady=10, side=tk.LEFT)  # Set side=tk.LEFT
+
+# Create a separate box for entering the link
+link_entry = tk.Entry(window, width=30)
+link_entry.pack(padx=10, pady=10, side=tk.LEFT)  # Set side=tk.LEFT
+
+# Create the "Upload Link" button
+upload_button = tk.Button(window, text="Upload", command=on_upload_button_click, width=10, height=2)
+upload_button.pack(pady=10, side=tk.LEFT)  # Set side=tk.LEFT
 
 # Bind the <Return> key to the on_send_button_click function
 entry.bind("<Return>", on_send_button_click)
