@@ -1,37 +1,28 @@
 import tkinter as tk
-import openai  # You need to install the 'openai' library (pip install openai)
-
-# Set your OpenAI API key here
-openai.api_key = 'YOUR_OPENAI_API_KEY'
-
-def get_chatbot_response(message):
-    # Make a request to the OpenAI API for a chat-based response
-    response = openai.Completion.create(
-        engine="text-davinci-002",  # You may use a different engine if needed
-        prompt=message,
-        max_tokens=100,
-        temperature=0.7
-    )
-    return response.choices[0].text.strip()
+import textwrap
+import google.generativeai as genai
 
 def on_send_button_click(event=None):
-    user_message = entry.get()
-    if user_message:
-        # Display the user's message in the listbox
-        messages_listbox.insert(tk.END, f"You: {user_message}")
-
-        # Get the chatbot's response
-        bot_response = get_chatbot_response(user_message)
-
-        # Display the chatbot's response in the listbox
-        messages_listbox.insert(tk.END, f"Chatbot: {bot_response}")
-
+    message = entry.get()
+    if message:
+        # Insert the message at the end of the listbox
+        messages_listbox.insert(tk.END, f"You: {message}")
         # Clear the entry widget after sending
         entry.delete(0, 'end')
+        
+        # Generate response using Generative AI
+        response = model.generate_content(message)
+        formatted_response = to_markdown(response.text)
+        messages_listbox.insert(tk.END, formatted_response)
+
+def to_markdown(text):
+    # Format text as markdown
+    formatted_text = text.replace('•', '  *')
+    return textwrap.indent(formatted_text, 'Sahayak: ')
 
 # Create the main window
 window = tk.Tk()
-window.title("Chat UI")
+window.title("Dharshak AI")
 
 # Create and place the listbox widget
 messages_listbox = tk.Listbox(window, width=40, height=10)
@@ -50,6 +41,10 @@ entry.bind("<Return>", on_send_button_click)
 
 # Allow the window to be resizable in both directions
 window.resizable(True, True)
+
+# Initialize Google Generative AI model
+genai.configure(api_key='AIzaSyCMRX-gx13aEdKP4ko_dP5gppwHUFu-7Ec')
+model = genai.GenerativeModel('gemini-pro')
 
 # Start the main event loop
 window.mainloop()
