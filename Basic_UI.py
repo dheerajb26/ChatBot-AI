@@ -4,6 +4,7 @@ import textwrap
 import google.generativeai as genai
 import fitz
 from exchangelib import Credentials, Account, DELEGATE, Configuration
+from transformers import pipeline
 
 def extract_text_from_pdf_bytes(pdf_bytes):
     text = ""
@@ -56,6 +57,13 @@ def fetch_and_generate_summaries(email, password):
 
     messages_text.config(state=tk.DISABLED)
 
+def answer_question(question):
+    # Use pipeline for question answering
+    nlp_qa = pipeline("question-answering")
+    context = messages_text.get("1.0", tk.END)
+    result = nlp_qa(question=question, context=context)
+    return result["answer"]
+
 def on_email_entry_click(event):
     if entry_email.get() == "Enter your email":
         entry_email.delete(0, tk.END)
@@ -75,6 +83,14 @@ def on_fetch_and_summarize_button_click():
     email = entry_email.get()
     password = entry_password.get()
     fetch_and_generate_summaries(email, password)
+
+def on_ask_question_button_click():
+    question = entry_question.get()
+    answer = answer_question(question)
+    messages_text.config(state=tk.NORMAL)
+    messages_text.insert(tk.END, f"\n\nQuestion: {question}\n")
+    messages_text.insert(tk.END, f"Answer: {answer}\n")
+    messages_text.config(state=tk.DISABLED)
 
 window = tk.Tk()
 window.title("Dharshak AI")
@@ -99,6 +115,13 @@ entry_password.pack(padx=10, pady=5, side=tk.LEFT)
 
 fetch_and_summarize_button = tk.Button(window, text="Fetch and Summarize", command=on_fetch_and_summarize_button_click, width=20, height=2)
 fetch_and_summarize_button.pack(pady=10, side=tk.LEFT)
+
+# Entry field for asking questions
+entry_question = tk.Entry(window, width=50)
+entry_question.pack(padx=10, pady=10, side=tk.LEFT)
+
+ask_question_button = tk.Button(window, text="Ask Question", command=on_ask_question_button_click, width=15, height=2)
+ask_question_button.pack(pady=10, side=tk.LEFT)
 
 window.resizable(True, True)
 
